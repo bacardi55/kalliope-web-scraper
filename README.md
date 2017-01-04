@@ -7,6 +7,12 @@ A simple neuron for Kalliope to read part of web pages
 
 Make kalliope read information from any web page
 
+## Installation
+
+  ```
+  kalliope install --git-url git@github.com:bacardi55/kalliope-web-scraper.git
+  ```
+
 
 ## Options
 
