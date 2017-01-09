@@ -22,7 +22,6 @@ Make kalliope read information from any web page
 | main_selector        | yes      |         |         | The main selector that shoud return a list of htmlelement (each one being a news)          |
 | title_selector       | yes      |         |         | The selector for the the title in each element of the main_selector                        |
 | description_selector | yes      |         |         | The selector for the the description/summary/teaser/… in each element of the main_selector |
-| file_template        | yes      |         |         | Template file to use                                                                       |
 
 
 ## Return Values
