@@ -10,7 +10,7 @@ Make kalliope read information from any web page
 ## Installation
 
   ```
-  kalliope install --git-url git@github.com:bacardi55/kalliope-web-scraper.git
+  kalliope install --git-url https://github.com/bacardi55/kalliope-web-scraper.git
   ```
 
 
