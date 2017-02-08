@@ -67,4 +67,4 @@ This synapse will find read all "main" news on news.google.com
 
 
 
-* [my posts about kalliope](https://bacardi55.org/en/blog/2017/kalliope-neuron-google-calendar)
+* [my posts about kalliope](http://bacardi55.org/en/term/kalliope)
