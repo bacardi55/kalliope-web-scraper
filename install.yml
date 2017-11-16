@@ -7,6 +7,6 @@
   tasks:
     - name: "Install pip dependencies"
       pip:
-        name: xextract
-        version: 0.1.4
+        name: beautifulsoup4
+        version: 3.2.1
 

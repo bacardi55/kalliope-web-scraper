@@ -16,12 +16,15 @@ Make kalliope read information from any web page
 
 ## Options
 
-| parameter            | required | default | choices | comment                                                                                    |
-|----------------------|----------|---------|---------|--------------------------------------------------------------------------------------------|
-| url                  | yes      |         |         | The url of the site to parse                                                               |
-| main_selector        | yes      |         |         | The main selector that shoud return a list of htmlelement (each one being a news)          |
-| title_selector       | yes      |         |         | The selector for the the title in each element of the main_selector                        |
-| description_selector | yes      |         |         | The selector for the the description/summary/teaser/… in each element of the main_selector |
+| parameter                  | required | default | choices | comment                                                                                         |
+|----------------------------|----------|---------|---------|-------------------------------------------------------------------------------------------------|
+| url                        | yes      |         |         | The url of the site to parse                                                                    |
+| main_selector_tag          | yes      |         |         | The main selector html tag that shoud return a list of htmlelement                              |
+| main_selector_class        | yes      |         |         | The main selector class that shoud return a list of htmlelement                                 |
+| title_selector_tag         | yes      |         |         | The selector html tag for the title in each element of the main_selector                        |
+| title_selector_class       | yes      |         |         | The selector class for the title in each element of the main_selector                           |
+| description_selector_tag   | yes      |         |         | The selector html tag for the description/summary/teaser/… in each element of the main_selector |
+| description_selector_class | yes      |         |         | The selector class for the description/summary/teaser/… in each element of the main_selector    |
 
 
 ## Return Values
@@ -29,7 +32,7 @@ Make kalliope read information from any web page
 | Name         | Description                                                                           | Type     | sample   |
 | ------------ | ------------------------------------------------------------------------------------- | -------- | -------- |
 | returncode   | The http response code. If everything is ok, should be 200                            | string   |          |
-| items        | List of item. Each news contains the title and content (new['title'] new['content']   | list     |          |
+| data         | List of item. Each news contains the title and content (new['title'] new['content']   | list     |          |
 
 
 ## Synapses example
@@ -37,18 +40,19 @@ Make kalliope read information from any web page
 This synapse will find read all "main" news on news.google.com
 ```
 ---
-  - name: "Google-news-en"
+  - name: "Programme-tv"
     signals:
-      - order: "what are the latest news"
+      - order: "What's on TV tonight"
     neurons:
-      - say:
-          message: "Searching latest news Sir"
       - web_scraper:
-          url: "https://news.google.com"
-          main_selector: "div.top-stories-section div.section-content div.story"
-          title_selector: "h2.esc-lead-article-title > a > span"
-          description_selector: "div.esc-lead-snippet-wrapper"
-          file_template: "templates/en_web_scraper.j2"
+          url: "http://tvmag.lefigaro.fr/programme-tv/ce_soir_la_tv.html"
+          main_selector_tag: "div"
+          main_selector_class: "tvm-grid-channel__prog"
+          title_selector_tag: "span"
+          title_selector_class: "tvm-channel__logo"
+          description_selector_tag: "h3"
+          description_selector_class: "tvm-grid-channel__name"
+          file_template: "templates/programme_tv.j2"
 ```
 
 ## Template example
@@ -57,7 +61,7 @@ This synapse will find read all "main" news on news.google.com
 {% if returncode != 200 %}
     Error while retrieving web page.
 {% else %}
-    {% for g in news: %}
+    {% for g in data: %}
         Title: {{ g['title'] }}
         Summary: {{ g['content'] }}
     {% endfor %}

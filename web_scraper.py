@@ -1,11 +1,12 @@
 import logging
 import requests
 
-from xextract import String, Group
+from bs4 import BeautifulSoup
 from kalliope.core.NeuronModule import NeuronModule, InvalidParameterException
 
 logging.basicConfig()
 logger = logging.getLogger("kalliope")
+
 
 class Web_scraper (NeuronModule):
     def __init__(self, **kwargs):
@@ -19,34 +20,45 @@ class Web_scraper (NeuronModule):
         # get parameters form the neuron
         self.configuration = {
             "url": kwargs.get('url', None),
-            "main_selector": kwargs.get('main_selector', None),
-            "title_selector": kwargs.get('title_selector', None),
-            "description_selector": kwargs.get('description_selector', None)
+            "main_selector": {
+                'tag': kwargs.get('main_selector_tag', None),
+                'class': kwargs.get('main_selector_class', None)
+            },
+            "title_selector": {
+                'tag': kwargs.get('title_selector_tag', None),
+                'class': kwargs.get('title_selector_class', None)
+            },
+            "description_selector": {
+                'tag': kwargs.get('description_selector_tag', None),
+                'class': kwargs.get('description_selector_class', None)
+            }
         }
 
         # check parameters
         if self._is_parameters_ok():
             self.infos = {
-                "news": [],
+                "data": [],
                 "returncode": None
             }
 
             try:
                 r = requests.get(self.configuration['url'])
-                news = Group(css=self.configuration['main_selector'], children=[
-                    String(name="title", css=self.configuration['title_selector'], attr='_all_text', quant=1),
-                    String(name="teaser", css=self.configuration['description_selector'], attr='_all_text', quant=1)
-                ]).parse(r.text)
-
                 self.infos['returncode'] = r.status_code
 
-                for new in news:
-                    self.infos['news'].append({
-                        'title': unicode(new['title']),
-                        'content': unicode(new['teaser'])
+                soup = BeautifulSoup(r.text, 'html.parser')
+                for selector in soup.find_all('div',
+                                              class_="tvm-grid-channel__prog"):
+                    self.infos['data'].append({
+                        'title': selector.find(
+                            'span',
+                            class_="tvm-channel__logo").get_text(),
+                        'content': selector.find(
+                            'h3',
+                            class_="tvm-grid-channel__name").get_text()
                     })
 
             except requests.exceptions.HTTPError:
+                print("exception")
                 self.infos['returncode'] = "HTTPError"
 
             logger.debug("Web scraper return : %s" % len(self.infos))
@@ -63,13 +75,28 @@ class Web_scraper (NeuronModule):
         if self.configuration['url'] is None:
             raise InvalidParameterException("Web scraper needs a url")
 
-        if self.configuration['main_selector'] is None:
-            raise InvalidParameterException("Web scraper needs a main_selector")
+        if self.configuration['main_selector']['tag'] is None:
+            raise InvalidParameterException(
+                "Web scraper needs a main_selector tag")
 
-        if self.configuration['title_selector'] is None:
-            raise InvalidParameterException("Web scraper needs a title_selector")
+        if self.configuration['main_selector']['class'] is None:
+            raise InvalidParameterException(
+                "Web scraper needs a main_selector class")
 
-        if self.configuration['description_selector'] is None:
-            raise InvalidParameterException("Web scraper needs a description_selector")
+        if self.configuration['title_selector']['tag'] is None:
+            raise InvalidParameterException(
+                "Web scraper needs a title_selector tag")
+
+        if self.configuration['title_selector']['class'] is None:
+            raise InvalidParameterException(
+                "Web scraper needs a title_selector class")
+
+        if self.configuration['description_selector']['tag'] is None:
+            raise InvalidParameterException(
+                "Web scraper needs a description_selector tag")
+
+        if self.configuration['description_selector']['class'] is None:
+            raise InvalidParameterException(
+                "Web scraper needs a description_selector class")
 
         return True
