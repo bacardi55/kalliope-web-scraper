@@ -8,3 +8,4 @@
     - name: "Install pip dependencies"
       pip:
         name: beautifulsoup4
+        executable: pip3
