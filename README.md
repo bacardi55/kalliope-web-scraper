@@ -5,12 +5,12 @@ A simple neuron for Kalliope to read part of web pages
 
 ## Synopsis
 
-Make kalliope read information from any web page
+Make kalliope read information from https://www.programme-tv.net web page. Be careful, the tags/clas are hard coded in the PY file
 
 ## Installation
 
   ```
-  kalliope install --git-url https://github.com/bacardi55/kalliope-web-scraper.git
+  kalliope install --git-url https://github.com/DuduNord/kalliope-web-scraper.git
   ```
 
 
