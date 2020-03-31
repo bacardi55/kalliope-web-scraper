@@ -47,14 +47,14 @@ class Web_scraper (NeuronModule):
 
                 soup = BeautifulSoup(r.text, 'html.parser')
                 for selector in soup.find_all('div',
-                                              class_="tvm-grid-channel__prog"):
+                                              class_="doubleBroadcastCard"):
                     self.infos['data'].append({
                         'title': selector.find(
-                            'span',
-                            class_="tvm-channel__logo").get_text(),
+                            'a',
+                            class_="doubleBroadcastCard-channelName").get_text(),
                         'content': selector.find(
-                            'h3',
-                            class_="tvm-grid-channel__name").get_text()
+                            'a',
+                            class_="doubleBroadcastCard-title").get_text()
                     })
 
             except requests.exceptions.HTTPError:
