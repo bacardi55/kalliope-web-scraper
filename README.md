@@ -5,7 +5,7 @@ A simple neuron for Kalliope to read part of web pages
 
 ## Synopsis
 
-Make kalliope read information from https://www.programme-tv.net web page. Be careful, the tags/clas are hard coded in the PY file
+Make kalliope read information from any webside, as an example below from https://www.programme-tv.net web page to get the TV programm.
 
 ## Installation
 
@@ -23,8 +23,12 @@ Make kalliope read information from https://www.programme-tv.net web page. Be ca
 | main_selector_class        | yes      |         |         | The main selector class that shoud return a list of htmlelement                                 |
 | title_selector_tag         | yes      |         |         | The selector html tag for the title in each element of the main_selector                        |
 | title_selector_class       | yes      |         |         | The selector class for the title in each element of the main_selector                           |
-| description_selector_tag   | yes      |         |         | The selector html tag for the description/summary/teaser/… in each element of the main_selector |
-| description_selector_class | yes      |         |         | The selector class for the description/summary/teaser/… in each element of the main_selector    |
+| title2_selector_tag        | yes      |         |         | The selector html tag for a 2nd title in each element of the main_selector                        |
+| title2_selector_class      | yes      |         |         | The selector class for for a 2nd title in each element of the main_selector                           |
+| content_selector_tag       | yes      |         |         | The selector html tag for the description/summary/teaser/… in each element of the main_selector |
+| content_selector_class     | yes      |         |         | The selector class for the description/summary/teaser/… in each element of the main_selector    |
+| detail_selector_tag        | yes      |         |         | The selector html tag for the second detail element in each element of the main_selector |
+| detail_selector_class      | yes      |         |         | The selector class for the second detail element in each element of the main_selector    |
 
 
 ## Return Values
@@ -45,26 +49,40 @@ This synapse will find read all "main" news on news.google.com
       - order: "What's on TV tonight"
     neurons:
       - web_scraper:
-          url: "http://tvmag.lefigaro.fr/programme-tv/ce_soir_la_tv.html"
+          url: "https://www.programme-tv.net/programme/sfr-25/en-ce-moment.html"
           main_selector_tag: "div"
-          main_selector_class: "tvm-grid-channel__prog"
-          title_selector_tag: "span"
-          title_selector_class: "tvm-channel__logo"
-          description_selector_tag: "h3"
-          description_selector_class: "tvm-grid-channel__name"
-          file_template: "templates/programme_tv.j2"
+          main_selector_class: "doubleBroadcastCard"
+          title_selector_tag: "a"
+          title_selector_class: "doubleBroadcastCard-channelName"
+          title2_selector_tag: "div"
+          title2_selector_class: "doubleBroadcastCard-channelNumber"
+          # detail_selector_tag: "div"                    # optional info to get the hour of the programm
+          # detail_selector_class: "doubleBroadcastCard-hour"
+          content_selector_tag: "a"
+          content_selector_class: "doubleBroadcastCard-title"
+          file_template: "templates/programme_tv_enfant.j2"
 ```
 
 ## Template example
 
 ```
+{% set myFav = [    "Chaîne n°14",
+                    "Chaîne n°18",
+                    "Chaîne n°200",
+                    "Chaîne n°201",
+                    "Chaîne n°203",
+                    "Chaîne n°205",
+                    "Chaîne n°210",
+                    "Chaîne n°213"
+                    ] %}
+
 {% if returncode != 200 %}
-    Error while retrieving web page.
+    Erreur à la lecture de la page.
 {% else %}
-    {% for g in data: %}
-        Title: {{ g['title'] }}
-        Summary: {{ g['content'] }}
-    {% endfor %}
+    {% for g in data: -%} 
+        {% if g['title2'] in myFav %} Sur {{ g['title'] }}, {{ g['content'] }}. {% endif %}  
+        {# can also add here the hour with g['detail'] #}
+    {%- endfor %}
 {% endif %}
 ```
 
