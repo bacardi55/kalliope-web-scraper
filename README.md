@@ -6,6 +6,7 @@ A simple neuron for Kalliope to read part of web pages
 ## Synopsis
 
 Make kalliope read information from any webside, as an example below from https://www.programme-tv.net web page to get the TV programm.
+Quick note : if you want to ge the program for tomorrow, you will need a new URL. To build the new url you can use the example at the end of the description.
 
 ## Installation
 
@@ -61,6 +62,38 @@ This synapse will find read all "main" news on news.google.com
           content_selector_tag: "a"
           content_selector_class: "doubleBroadcastCard-title"
           file_template: "templates/programme_tv_enfant.j2"
+
+  - name: "Programme-tv-tomorrow"
+    signals:
+      - order: "What's on TV tomorrow"
+    neurons:
+      - shell:
+        cmd: "python3 gettomorowlink.py"
+        kalliope_memory:
+          tomorrowlink: "{{ output }}"
+      - web_scraper:
+          url: "{{ kalliope_memory['tomorrowlink'] }}"
+          main_selector_tag: "div"
+          main_selector_class: "doubleBroadcastCard"
+          title_selector_tag: "a"
+          title_selector_class: "doubleBroadcastCard-channelName"
+          title2_selector_tag: "div"
+          title2_selector_class: "doubleBroadcastCard-channelNumber"
+          # detail_selector_tag: "div"                    # optional info to get the hour of the programm
+          # detail_selector_class: "doubleBroadcastCard-hour"
+          content_selector_tag: "a"
+          content_selector_class: "doubleBroadcastCard-title"
+          file_template: "templates/programme_tv_enfant.j2"
+```
+
+## Py file example to load into the starter kit folder (make sure to make it executable with CHMOD)
+
+```
+import datetime
+from datetime import timedelta
+
+date_object = datetime.date.today() + datetime.timedelta(days=1)
+print("https://www.programme-tv.net/programme/sfr-25/"+date_object.strftime("%Y-%m-%d")+"/",end='')
 ```
 
 ## Template example
